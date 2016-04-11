@@ -1,0 +1,93 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+.slider__container {
+    width: 600px;
+    margin: 50px auto 0;
+}
+
+
+.slider__output {
+    display: inline-block;
+    width: 20%
+}
+
+.slider__holder {
+    display: inline-block;
+    width: 80%;
+}
+
+/*
+*
+*/
+.slider {
+    position: relative;
+    height: 40px;
+    margin: 0 20px;
+}
+
+.slider--disabled {
+    opacity : 0.3;
+}
+
+/*
+* The "tab" you slide
+*/
+.slider__handle {
+    position: absolute;
+    margin-left: -20px;
+    width: 40px;
+    height: 40px;
+    background-color: blue;
+}
+
+/*
+* The "track" the slider slides along.
+*/
+.slider__bar {
+    position: relative;
+    top: 50%;
+    height: 3px;
+    margin-top: -1px;
+    border-radius: 1px;
+}
+
+.slider__bar-0 {
+    background-color: green;
+}
+
+.slider__bar-1 {
+    background-color: red;
+}
+
+/*
+* The value the slider outputs
+*/
+.slider__value {
+    display: inline-block;
+    width: 80%;
+    font-weight: bold;
+}
+
+/*
+* Prefix / Suffix around the value
+* //TODO this should be __
+*/
+.slider__value--prefix,
+.slider__value--affix {
+    display: inline-block;
+    width: 10%;
+    vertical-align: middle;
+}
+
+/*
+ * Label styling
+*/
+
+.slider__label {
+}
+
+.slider__label--small {
+    font-size: 70%;
+}

@@ -65,10 +65,6 @@ class ReactSlider extends React.Component {
         sliderStart: 0
     };
 
-    shouldComponentUpdate(...args) {
-        return React.addons.PureRenderMixin.shouldComponentUpdate.apply(this, args);
-    }
-
     componentWillReceiveProps(nextProps) {
         const value = nextProps.value ? this._trimValue(nextProps.value, nextProps) : this._trimValue(nextProps.defaultValue, nextProps);
 

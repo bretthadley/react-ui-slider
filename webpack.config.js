@@ -7,7 +7,7 @@ var path = require('path');
 module.exports = {
     entry: './src/index',
     output: {
-        filename: 'dist/ReactSlider.js',
+        filename: 'dist/ReactUISlider.js',
         libraryTarget: 'umd'
     },
     externals: [{
