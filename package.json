@@ -2,7 +2,7 @@
   "name": "react-ui-slider",
   "version": "0.0.0",
   "description": "A Reactjs Slider component",
-  "main": "dist/ReactSlider.js",
+  "main": "dist/ReactUISlider.js",
   "scripts": {
     "test": "mocha --compilers js:babel-register --recursive",
     "build": "npm run clean && webpack",
