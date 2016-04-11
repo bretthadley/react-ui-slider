@@ -3,3 +3,4 @@ modules
 dist
 .DS_Store
 .idea
+demo.js
