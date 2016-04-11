@@ -2,6 +2,9 @@
 
 React JS slider similar to jQuery UI slider. Built with ES6/ES2015.
 
+### TODO
+This is currently in product use. I just need to document everything. If you're feeling up to the challenge try figure out some options for yourself by read the code.
+
 ### Demo
 http://bretthadley.github.io/react-ui-slider/demo/
 
