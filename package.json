@@ -1,0 +1,25 @@
+{
+  "name": "react-ui-slider",
+  "version": "0.0.0",
+  "description": "A Reactjs Slider component",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bretthadley/react-ui-slider.git"
+  },
+  "keywords": [
+    "react",
+    "slider",
+    "ui-slider",
+    "jquery-ui-slider"
+  ],
+  "author": "Brett Hadley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bretthadley/react-ui-slider/issues"
+  },
+  "homepage": "https://github.com/bretthadley/react-ui-slider#readme"
+}
