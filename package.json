@@ -1,6 +1,6 @@
 {
   "name": "react-ui-slider",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A Reactjs Slider component",
   "main": "dist/ReactUISlider.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "keywords": [
     "react",
+    "react-component",
     "slider",
     "ui-slider",
     "jquery-ui-slider"
