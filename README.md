@@ -5,6 +5,14 @@ React JS slider similar to jQuery UI slider. Built with ES6/ES2015.
 ### Demo
 http://bretthadley.github.io/react-ui-slider/demo/
 
+# TODO
+* tests
+* align input value to a step (make optional)
+* extract out bar / handle into leaf components
+* refactor align value isArray stuff (not consistent with last index)
+* add forceUpdate hook to for parent component
+* add some hooks to get the value back from parent
+
 ### Installation
 
 ```sh

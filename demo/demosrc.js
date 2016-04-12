@@ -18,7 +18,7 @@ class Demo extends React.Component {
             max: 100,
             step: 2,
             label: "Deposit",
-            labelSmall: "GBP (£)",
+            labelAfter: "GBP (£)",
             onAfterChange: this.handleSliderChange
         }
 

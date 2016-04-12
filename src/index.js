@@ -484,7 +484,7 @@ class ReactSlider extends React.Component {
     _renderBar = (i, left, right) => {
         const classes = {};
         classes[this.props.barClassName] = true;
-        classes[this.props.barClassName + '-' + i] = true;
+        classes[this.props.barClassName + '--' + i] = true;
         let barclass = cx(classes);
         let style = this._buildBarStyle(left, right);
 
@@ -509,15 +509,10 @@ class ReactSlider extends React.Component {
     };
 
     _renderInputOutput() {
-        let label = this.props.label ? <span className={this.props.labelClassName}>{this.props.label}</span> : null;
-        let labelSmall = this.props.labelSmall ? <span className="slider__label--small">
-        <small>{this.props.labelSmall}</small>
-    </span> : null;
-        let prefix = this.props.valuePrefix ?
-            <span className="slider__value--prefix">{this.props.valuePrefix}</span> : null;
-
-        let suffix = this.props.valueSuffix ?
-            <span className="slider__value--suffix">{this.props.valueSuffix}</span> : null;
+        let label = this.props.label ? <span className={`${this.props.labelClassName} ${this.props.labelClassName}--before`}>{this.props.label}</span> : null;
+        let labelAfter = this.props.labelAfter ? <span className={`${this.props.labelClassName} ${this.props.labelClassName}--after`}>{this.props.labelAfter}</span> : null;
+        let prefix = this.props.valuePrefix ? <span className="slider__value__prefix">{this.props.valuePrefix}</span> : null;
+        let suffix = this.props.valueSuffix ? <span className="slider__value__suffix">{this.props.valueSuffix}</span> : null;
 
         if (this.props.editable) {
             return (
@@ -538,7 +533,7 @@ class ReactSlider extends React.Component {
                         />
                         {suffix}
                     </div>
-                    {labelSmall}
+                    {labelAfter}
                 </div>
             );
         }
@@ -546,10 +541,9 @@ class ReactSlider extends React.Component {
             <div className={this.props.outputClassName}>
                 {label}
                 <div className="slider__value-prefix-suffix">
-                    {prefix}
-                    <span className="slider__value">{this.state.value}{suffix}</span>
+                    <div className="slider__value">{prefix}{this.state.value}{suffix}</div>
                 </div>
-                {labelSmall}
+                {labelAfter}
             </div>
         );
     }
