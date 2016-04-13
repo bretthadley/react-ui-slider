@@ -19,5 +19,6 @@ module.exports = {
     },
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin()
-    ]
+    ],
+    devtool: "sourcemap"
 };
