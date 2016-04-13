@@ -23,16 +23,17 @@ class Demo extends React.Component {
         }
 
         const sliderPropsUneven = {
-            min: 0,
+            min: 1,
             max: 25,
             step: [1,5,10,20,25],
             label: "Deposit",
             labelAfter: "GBP (£)",
-            onAfterChange: this.handleSliderChange
+            onAfterChange: this.handleSliderChange,
+            defaultValue : 1
         }
 
         const sliderPropsUnevenButEven = {
-            min: 0,
+            min: 1,
             max: 25,
             step: [1,5,10,20,25],
             evenStepSpacing: true,

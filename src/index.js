@@ -124,13 +124,17 @@ class ReactSlider extends React.Component {
     };
 
     _calcOffset(val = this.state.value) {
-        if(this.props.evenStepSpacing) {
-            const indexOfVal = this.props.step.findIndex((val) => val === val);
-            return this._calcEvenStepPosition()[indexOfVal];
-        }
-
         const ratio = (val - this.props.min) / (this.props.max - this.props.min);
         return ratio * 100;
+    }
+
+    _calcDisplayOffset(val = this.state.value) {
+        if (this.props.evenStepSpacing){
+            const indexOfVal = this.props.step.findIndex((ele) => val === ele);
+            return this._calcEvenStepPosition()[indexOfVal];
+        } else {
+            return this._calcOffset(val);
+        }
     }
 
     _calcValue(offset) {
@@ -356,7 +360,7 @@ class ReactSlider extends React.Component {
         const onePercent = range / 100;
         let normalisedSteps;
 
-        if(this.props.evenStepSpacing) {
+        if (this.props.evenStepSpacing) {
             normalisedSteps = this._calcEvenStepPosition();
         } else {
             normalisedSteps = this.props.step.map((step) => {
@@ -365,8 +369,7 @@ class ReactSlider extends React.Component {
         }
 
         let index = -1;
-
-        console.log('normvalal', val, percentOfSlider)
+        
         normalisedSteps.some((step, i) => {
             if (step === percentOfSlider) {
                 index = i;
@@ -374,7 +377,7 @@ class ReactSlider extends React.Component {
             }
 
             if (step > percentOfSlider) {
-                const lastVal = noramlisedSteps[i - 1];
+                const lastVal = normalisedSteps[i - 1];
                 const curr = step;
 
                 const a = percentOfSlider - lastVal;
@@ -387,8 +390,7 @@ class ReactSlider extends React.Component {
 
             return false;
         });
-
-        console.log('alignvalstep index', index, this.props.step[index])
+        
 
         return this.props.step[index];
     }
@@ -474,7 +476,7 @@ class ReactSlider extends React.Component {
         const range = this.props.max - this.props.min;
         let stepCount, tickSpace;
 
-        if(Array.isArray(this.props.step)) {
+        if (Array.isArray(this.props.step)) {
             stepCount = this.props.step.length;
             tickSpace = 100 / (stepCount - 1);
         } else {
@@ -490,7 +492,7 @@ class ReactSlider extends React.Component {
     }
 
     _buildHandleStyle(offset) {
-        console.log(offset);
+        // console.log(offset);
         const style = {
             position: 'absolute',
             zIndex: 10
@@ -515,7 +517,7 @@ class ReactSlider extends React.Component {
     }
 
     _renderHandle() {
-        const offset = this._calcOffset();
+        const offset = this._calcDisplayOffset();
         const classes = {};
         classes[this.props.handleClassName] = true;
         let handleClass = cx(classes);
@@ -585,7 +587,7 @@ class ReactSlider extends React.Component {
     }
 
     _renderBars = () => {
-        const offset = this._calcOffset();
+        const offset = this._calcDisplayOffset();
         const bars = [];
 
         bars.push(this._renderBar(0, 0, offset));
