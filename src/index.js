@@ -29,6 +29,8 @@ class ReactSlider extends React.Component {
         barClassName: React.PropTypes.string,
         disabled: React.PropTypes.bool,
         snapDragDisabled: React.PropTypes.bool,
+        evenStepSpacing: React.PropTypes.bool,
+        alignInputToStep: React.PropTypes.bool,
         onBeforeChange: React.PropTypes.func,
         onChange: React.PropTypes.func,
         onAfterChange: React.PropTypes.func,
@@ -55,11 +57,12 @@ class ReactSlider extends React.Component {
         disabled: false,
         snapDragDisabled: false,
         invert: false,
-        editable: false
+        editable: false,
+        alignInputToStep: true,
+        evenStepSpacing: false
     };
 
     state = {
-        index: -1,
         upperBound: 0,
         sliderLength: 0,
         sliderStart: 0
@@ -120,10 +123,18 @@ class ReactSlider extends React.Component {
         }
     };
 
-    _calcOffset(val) {
-        const value = val || this.state.value;
-        const ratio = (value - this.props.min) / (this.props.max - this.props.min);
+    _calcOffset(val = this.state.value) {
+        const ratio = (val - this.props.min) / (this.props.max - this.props.min);
         return ratio * 100;
+    }
+
+    _calcDisplayOffset(val = this.state.value) {
+        if (this.props.evenStepSpacing){
+            const indexOfVal = this.props.step.findIndex((ele) => val === ele);
+            return this._calcEvenStepPosition()[indexOfVal];
+        } else {
+            return this._calcOffset(val);
+        }
     }
 
     _calcValue(offset) {
@@ -252,11 +263,6 @@ class ReactSlider extends React.Component {
             this.isScrolling = Math.abs(diffScrollDir) > Math.abs(diffMainDir);
         }
 
-        if (this.isScrolling) {
-            this.setState({ index: -1 });
-            return;
-        }
-
         e.preventDefault();
 
         this._move(position[0]);
@@ -331,22 +337,9 @@ class ReactSlider extends React.Component {
 
     _alignValue(val) {
         if (Array.isArray(this.props.step)) {
-            const percentOfSlider = Math.abs(this._calcOffset(val));
-            const length = this.props.step.length;
-            const correction = length / 100;
-            const closestIndex = (length / (100 + correction)) * percentOfSlider;
-            let alignValue = Math.round(closestIndex);
-
-            if (alignValue >= length) {
-                alignValue = length - 1;
-            }
-
-            if (alignValue < 0) {
-                alignValue = 0;
-            }
-
-            return this.props.step[alignValue];
+            return this.alignValueToSteps(val);
         }
+
         const valModStep = (val - this.props.min) % this.props.step;
         let alignValue = val - valModStep;
 
@@ -359,6 +352,47 @@ class ReactSlider extends React.Component {
         }
 
         return parseFloat(alignValue.toFixed(5));
+    }
+
+    alignValueToSteps(val) {
+        const percentOfSlider = Math.abs(this._calcOffset(val));
+        const range = this.props.max - this.props.min;
+        const onePercent = range / 100;
+        let normalisedSteps;
+
+        if (this.props.evenStepSpacing) {
+            normalisedSteps = this._calcEvenStepPosition();
+        } else {
+            normalisedSteps = this.props.step.map((step) => {
+                return Math.abs((step - this.props.min) / onePercent);
+            });
+        }
+
+        let index = -1;
+        
+        normalisedSteps.some((step, i) => {
+            if (step === percentOfSlider) {
+                index = i;
+                return true;
+            }
+
+            if (step > percentOfSlider) {
+                const lastVal = normalisedSteps[i - 1];
+                const curr = step;
+
+                const a = percentOfSlider - lastVal;
+                const b = curr - percentOfSlider;
+
+                index = a > b ? i : i - 1;
+
+                return true;
+            }
+
+            return false;
+        });
+        
+
+        return this.props.step[index];
     }
 
     _onSliderClick = (e) => {
@@ -406,7 +440,11 @@ class ReactSlider extends React.Component {
 
         newValue = this._trimValue(parseInt(newValue, 10));
 
-        const input = this.refs.input.getDOMNode();
+        if (this.props.alignInputToStep) {
+            newValue = this._alignValue(newValue);
+        }
+
+        const input = this.refs.input;
 
         input.value = newValue;
 
@@ -433,7 +471,28 @@ class ReactSlider extends React.Component {
         }
     };
 
+    _calcEvenStepPosition() {
+        const ticks = [];
+        const range = this.props.max - this.props.min;
+        let stepCount, tickSpace;
+
+        if (Array.isArray(this.props.step)) {
+            stepCount = this.props.step.length;
+            tickSpace = 100 / (stepCount - 1);
+        } else {
+            stepCount = (range / this.props.step) + 1;
+            tickSpace = 100 / (stepCount - 1);
+        }
+
+        for (let i = 0; i < stepCount; i++) {
+            ticks.push(tickSpace * i);
+        }
+
+        return ticks;
+    }
+
     _buildHandleStyle(offset) {
+        // console.log(offset);
         const style = {
             position: 'absolute',
             zIndex: 10
@@ -458,7 +517,7 @@ class ReactSlider extends React.Component {
     }
 
     _renderHandle() {
-        const offset = this._calcOffset();
+        const offset = this._calcDisplayOffset();
         const classes = {};
         classes[this.props.handleClassName] = true;
         let handleClass = cx(classes);
@@ -484,7 +543,7 @@ class ReactSlider extends React.Component {
     _renderBar = (i, left, right) => {
         const classes = {};
         classes[this.props.barClassName] = true;
-        classes[this.props.barClassName + '-' + i] = true;
+        classes[this.props.barClassName + '--' + i] = true;
         let barclass = cx(classes);
         let style = this._buildBarStyle(left, right);
 
@@ -498,8 +557,37 @@ class ReactSlider extends React.Component {
         );
     };
 
+    _renderTick = (left) => {
+        const style = {
+            position: 'absolute',
+            width: '1px',
+            backgroundColor: 'red',
+            top: '0px',
+            bottom: '0px',
+            left: left + '%'
+        };
+
+        return <span style={style}></span>;
+    }
+
+    _renderTicks = () => {
+        const range = this.props.max - this.props.min;
+
+        if (Array.isArray(this.props.step) && !this.props.evenStepSpacing) {
+            const onePercent = range / 100;
+
+            return this.props.step.map((step) => {
+                return this._renderTick(Math.abs((step - this.props.min) / onePercent));
+            });
+        } else {
+            return this._calcEvenStepPosition().map((offset) => {
+                return this._renderTick(offset)
+            });
+        }
+    }
+
     _renderBars = () => {
-        const offset = this._calcOffset();
+        const offset = this._calcDisplayOffset();
         const bars = [];
 
         bars.push(this._renderBar(0, 0, offset));
@@ -509,15 +597,10 @@ class ReactSlider extends React.Component {
     };
 
     _renderInputOutput() {
-        let label = this.props.label ? <span className={this.props.labelClassName}>{this.props.label}</span> : null;
-        let labelSmall = this.props.labelSmall ? <span className="slider__label--small">
-        <small>{this.props.labelSmall}</small>
-    </span> : null;
-        let prefix = this.props.valuePrefix ?
-            <span className="slider__value--prefix">{this.props.valuePrefix}</span> : null;
-
-        let suffix = this.props.valueSuffix ?
-            <span className="slider__value--suffix">{this.props.valueSuffix}</span> : null;
+        let label = this.props.label ? <span className={`${this.props.labelClassName} ${this.props.labelClassName}--before`}>{this.props.label}</span> : null;
+        let labelAfter = this.props.labelAfter ? <span className={`${this.props.labelClassName} ${this.props.labelClassName}--after`}>{this.props.labelAfter}</span> : null;
+        let prefix = this.props.valuePrefix ? <span className="slider__value__prefix">{this.props.valuePrefix}</span> : null;
+        let suffix = this.props.valueSuffix ? <span className="slider__value__suffix">{this.props.valueSuffix}</span> : null;
 
         if (this.props.editable) {
             return (
@@ -538,7 +621,7 @@ class ReactSlider extends React.Component {
                         />
                         {suffix}
                     </div>
-                    {labelSmall}
+                    {labelAfter}
                 </div>
             );
         }
@@ -546,10 +629,9 @@ class ReactSlider extends React.Component {
             <div className={this.props.outputClassName}>
                 {label}
                 <div className="slider__value-prefix-suffix">
-                    {prefix}
-                    <span className="slider__value">{this.state.value}{suffix}</span>
+                    <div className="slider__value">{prefix}{this.state.value}{suffix}</div>
                 </div>
-                {labelSmall}
+                {labelAfter}
             </div>
         );
     }
@@ -575,6 +657,7 @@ class ReactSlider extends React.Component {
                         onClick={this._onSliderClick}
                     >
                         {bars}
+                        {this._renderTicks()}
                         {handle}
                     </div>
                 </div>

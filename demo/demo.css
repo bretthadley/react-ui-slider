@@ -19,7 +19,7 @@
 }
 
 /*
-*
+* TODO put this as the container class name to keep it consistent with BEM
 */
 .slider {
     position: relative;
@@ -53,11 +53,11 @@
     border-radius: 1px;
 }
 
-.slider__bar-0 {
+.slider__bar--0 {
     background-color: green;
 }
 
-.slider__bar-1 {
+.slider__bar--1 {
     background-color: red;
 }
 
@@ -72,10 +72,9 @@
 
 /*
 * Prefix / Suffix around the value
-* //TODO this should be __
 */
-.slider__value--prefix,
-.slider__value--affix {
+.slider__value__prefix,
+.slider__value__affix {
     display: inline-block;
     width: 10%;
     vertical-align: middle;
@@ -84,10 +83,13 @@
 /*
  * Label styling
 */
-
 .slider__label {
+
 }
 
+/*
+* TODO convert to labelBefore / labelAfter to eliminate specific styles
+*/
 .slider__label--small {
     font-size: 70%;
 }
